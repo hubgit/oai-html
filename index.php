@@ -21,6 +21,7 @@ else if (isset($_GET['set'])) {
 	list($items, $links) = $oai->items($_GET['set'], $_GET['resumptionToken'], $_GET['from'], $_GET['until']);
 }
 else {
+	$description = $oai->identify();
 	list($sets, $links) = $oai->sets($_GET['resumptionToken']);
 }
 

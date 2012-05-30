@@ -33,6 +33,24 @@ class OAI {
 		}
 	}
 
+	function identify() {
+		$params = array(
+			'verb' => 'Identify',
+		);
+
+		$url = $this->config['oai_server'] . '?' . http_build_query($params);
+		$xpath = $this->xpath($url);
+		$root = $xpath->query('oai:' . $params['verb'])->item(0);
+
+		$xpath->registerNamespace('oai_id', 'http://www.openarchives.org/OAI/2.0/oai-identifier');
+
+		return array(
+			'name' => $xpath->query('oai:repositoryName', $root)->item(0)->textContent,
+			'url' => $xpath->query('oai:baseURL', $root)->item(0)->textContent,
+			'sample' => $xpath->query('oai:description/oai_id:oai-identifier/oai_id:sampleIdentifier', $root)->item(0)->textContent,
+		);
+	}
+
 	function sets($token = null) {
 		$params = array(
 			'verb' => 'ListSets',

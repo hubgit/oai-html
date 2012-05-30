@@ -9,7 +9,12 @@
 <body>
 	<h1><a href="./">OAI</a></h1>
 
-	<div><a href="<? h($oai->config['oai_server']); ?>"><? h($oai->config['oai_server']); ?></a></div>
+<? if ($description): ?>
+	<div><a href="<? h($description['url']); ?>"><? h($description['name']); ?></a></div>
+<? if ($description['sample']): ?>
+	<div><a href="<? h($description['url']); ?>?verb=GetRecord&amp;metadataPrefix=oai_dc&amp;identifier=<? h(urlencode($description['sample'])); ?>">Sample Record</a></div>
+<? endif; ?>
+<? endif; ?>
 
 <? if ($sets): ?>
 	<ul>
@@ -52,6 +57,7 @@
 
 <? if ($links): ?>
 <div class="links">
+	<h2>Links</h2>
 <? foreach ($links as $relation => $url): ?>
 	<a rel="relation" href="<? h($url); ?>"><? h(ucfirst($relation)); ?></a>
 <? endforeach; ?>
