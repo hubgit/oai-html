@@ -10,9 +10,9 @@
 	<h1><a href="./">OAI</a></h1>
 
 <? if ($info): ?>
-	<div><a href="<? h($info['url']); ?>"><? h($info['name']); ?></a></div>
+	<div><a rel="base-url" href="<? h($info['url']); ?>"><? h($info['name']); ?></a></div>
 <? if ($info['sample']): ?>
-	<div><a href="<? h($info['url']); ?>?verb=GetRecord&amp;metadataPrefix=oai_dc&amp;identifier=<? h(urlencode($info['sample'])); ?>">Sample Record</a></div>
+	<div><a rel="sample-identifier" href="<? h($info['url']); ?>?verb=GetRecord&amp;metadataPrefix=oai_dc&amp;identifier=<? h(urlencode($info['sample'])); ?>">Sample Record</a></div>
 <? endif; ?>
 <? endif; ?>
 
@@ -21,7 +21,7 @@
 
 	<ul>
 	<? foreach ($sets as $item): ?>
-	<li><a href="./?server=<? h($baseURL); ?>&amp;set=<? h(urlencode($item['id'])); ?>"><? h($item['name'] ? $item['name'] : $item['id']); ?></a></li>
+	<li><a rel="set" href="./?server=<? h($baseURL); ?>&amp;set=<? h(urlencode($item['id'])); ?>"><? h($item['name'] ? $item['name'] : $item['id']); ?></a></li>
 
 	<? endforeach; ?>
 	</ul>
@@ -54,7 +54,7 @@
 	<ul>
 	<?foreach ($items as $item): ?>
 		<li>
-			<div><a href="./?server=<? h($baseURL); ?>&amp;id=<? h(urlencode($item['id'])); ?>"><? h($item['title']); ?></a></div>
+			<div><a rel="item" href="./?server=<? h($baseURL); ?>&amp;id=<? h(urlencode($item['id'])); ?>"><? h($item['title']); ?></a></div>
 			<div><? h($item['date']); ?></div>
 			<p><? h($item['description']); ?></p>
 		</li>
@@ -67,7 +67,7 @@
 
 	<div class="links">
 	<? foreach ($links as $relation => $url): ?>
-		<a rel="relation" href="<? h($url); ?>"><? h(ucfirst($relation)); ?></a>
+		<a rel="<? h($relation); ?>" href="<? h($url); ?>"><? h(ucfirst($relation)); ?></a>
 	<? endforeach; ?>
 	</div>
 <? endif; ?>

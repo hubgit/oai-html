@@ -22,6 +22,6 @@ foreach ($nodes as $node) {
 
 <ul>
 <? foreach ($items as $item): ?>
-	<li><a href="./?server=<? h($item['url']) ?>"><? h($item['name'] ? $item['name'] : $item['url']) ?></a></li>
+	<li><a rel="service" href="./?server=<? h($item['url']) ?>"><? h($item['name'] ? $item['name'] : $item['url']) ?></a></li>
 <? endforeach; ?>
 </ul>

@@ -1,7 +1,5 @@
 <?php
 
-ini_set('display_errors', true);
-
 function h($text) {
 	print htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
