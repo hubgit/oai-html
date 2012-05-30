@@ -1,10 +1,43 @@
 <?php
 
-class OAI {
-	public $config;
+ini_set('display_errors', true);
 
-	function __construct() {
-		$this->config = parse_ini_file(__DIR__ . '/config.ini');
+function h($text) {
+	print htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+}
+
+class OAI {
+	public $baseURL;
+
+	function __construct($baseURL) {
+		$this->baseURL = $baseURL;
+	}
+
+	function generate() {
+		ob_start();
+
+		$fields = array();
+		$items = array();
+		$links = array();
+
+		if (isset($_GET['id'])) {
+			list($fields, $links) = $this->item($_GET['id']);
+		}
+		else if (isset($_GET['set'])) {
+			list($items, $links) = $this->items($_GET['set'], $_GET['resumptionToken'], $_GET['from'], $_GET['until']);
+		}
+		else {
+			$info = $this->identify();
+			list($sets, $links) = $this->sets($_GET['resumptionToken']);
+		}
+
+		foreach ($links as $relation => $url) {
+			header(sprintf('Link: <%s>; rel="%s"', $url, $relation));
+		}
+
+		$baseURL = $this->baseURL;
+		require __DIR__ . '/index.html.php';
+		ob_end_flush();
 	}
 
 	function xpath($url) {
@@ -38,7 +71,7 @@ class OAI {
 			'verb' => 'Identify',
 		);
 
-		$url = $this->config['oai_server'] . '?' . http_build_query($params);
+		$url = $this->baseURL . '?' . http_build_query($params);
 		$xpath = $this->xpath($url);
 		$root = $xpath->query('oai:' . $params['verb'])->item(0);
 
@@ -57,7 +90,7 @@ class OAI {
 			'resumptionToken' => $token,
 		);
 
-		$url = $this->config['oai_server'] . '?' . http_build_query($params);
+		$url = $this->baseURL . '?' . http_build_query($params);
 		$xpath = $this->xpath($url);
 		$root = $xpath->query('oai:' . $params['verb'])->item(0);
 
@@ -92,7 +125,7 @@ class OAI {
 			);
 		}
 
-		$url = $this->config['oai_server'] . '?' . http_build_query($params);
+		$url = $this->baseURL . '?' . http_build_query($params);
 		$xpath = $this->xpath($url);
 		$root = $xpath->query('oai:' . $params['verb'])->item(0);
 
@@ -123,7 +156,7 @@ class OAI {
 			'identifier' => $id,
 		);
 
-		$url = $this->config['oai_server'] . '?' . http_build_query($params);
+		$url = $this->baseURL . '?' . http_build_query($params);
 
 		$dom = new DOMDocument;
 		$dom->load($url);

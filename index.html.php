@@ -9,23 +9,27 @@
 <body>
 	<h1><a href="./">OAI</a></h1>
 
-<? if ($description): ?>
-	<div><a href="<? h($description['url']); ?>"><? h($description['name']); ?></a></div>
-<? if ($description['sample']): ?>
-	<div><a href="<? h($description['url']); ?>?verb=GetRecord&amp;metadataPrefix=oai_dc&amp;identifier=<? h(urlencode($description['sample'])); ?>">Sample Record</a></div>
+<? if ($info): ?>
+	<div><a href="<? h($info['url']); ?>"><? h($info['name']); ?></a></div>
+<? if ($info['sample']): ?>
+	<div><a href="<? h($info['url']); ?>?verb=GetRecord&amp;metadataPrefix=oai_dc&amp;identifier=<? h(urlencode($info['sample'])); ?>">Sample Record</a></div>
 <? endif; ?>
 <? endif; ?>
 
 <? if ($sets): ?>
+	<h2>Sets</h2>
+
 	<ul>
 	<? foreach ($sets as $item): ?>
-	<li><a href="./?set=<? h(urlencode($item['id'])); ?>"><? h($item['name']); ?></a></li>
+	<li><a href="./?server=<? h($baseURL); ?>&amp;set=<? h(urlencode($item['id'])); ?>"><? h($item['name'] ? $item['name'] : $item['id']); ?></a></li>
 
 	<? endforeach; ?>
 	</ul>
 <? endif; ?>
 
 <? if ($fields): ?>
+	<h2>Item</h2>
+
 	<table>
 	<?foreach ($fields as $field): ?>
 		<tr>
@@ -41,13 +45,16 @@
 		<div><label>Set <input type="text" name="set" value="<? h($_GET['set']); ?>"></label></div>
 		<div><label>From <input type="date" name="from" value="<? h($_GET['from']); ?>"></label></div>
 		<div><label>Until <input type="date" name="until" value="<? h($_GET['until']); ?>"></label></div>
+		<input type="hidden" name="server" value="<? h($_GET['server']); ?>">
 		<input type="submit" value="GET">
 	</form>
+
+	<h2>Items</h2>
 
 	<ul>
 	<?foreach ($items as $item): ?>
 		<li>
-			<div><a href="./?id=<? h(urlencode($item['id'])); ?>"><? h($item['title']); ?></a></div>
+			<div><a href="./?server=<? h($baseURL); ?>&amp;id=<? h(urlencode($item['id'])); ?>"><? h($item['title']); ?></a></div>
 			<div><? h($item['date']); ?></div>
 			<p><? h($item['description']); ?></p>
 		</li>
@@ -56,12 +63,13 @@
 <? endif; ?>
 
 <? if ($links): ?>
-<div class="links">
 	<h2>Links</h2>
-<? foreach ($links as $relation => $url): ?>
-	<a rel="relation" href="<? h($url); ?>"><? h(ucfirst($relation)); ?></a>
-<? endforeach; ?>
-</div>
+
+	<div class="links">
+	<? foreach ($links as $relation => $url): ?>
+		<a rel="relation" href="<? h($url); ?>"><? h(ucfirst($relation)); ?></a>
+	<? endforeach; ?>
+	</div>
 <? endif; ?>
 
 </body>
