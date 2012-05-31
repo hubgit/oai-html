@@ -21,22 +21,28 @@
 
 	<ul>
 	<? foreach ($sets as $item): ?>
-	<li><a rel="set" href="./?server=<? h($base); ?>&amp;set=<? h(urlencode($item['id'])); ?>"><? h($item['name'] ? $item['name'] : $item['id']); ?></a></li>
+	<li><a rel="set" href="./?server=<? h($base); ?>&amp;set=<? h(urlencode($item['id'])); ?>"><? h($item['dc']['name'] ? $item['dc']['name'] : $item['id']); ?></a></li>
 
 	<? endforeach; ?>
 	</ul>
 <? endif; ?>
 
-<? if ($fields): ?>
+<? if ($item): ?>
 	<h2>Item</h2>
 
 	<table>
-	<?foreach ($fields as $field): ?>
 		<tr>
-			<th><? h($field['field']); ?></th>
-			<td><? h($field['value']); ?></td>
+			<th>id</th>
+			<td><? h($item['id']); ?></td>
 		</tr>
-	<? endforeach; ?>
+<? if ($item['dc']): ?>
+<?foreach ($item['dc'] as $field => $value): ?>
+		<tr>
+			<th><? h($field); ?></th>
+			<td><? h($value); ?></td>
+		</tr>
+<? endforeach; ?>
+<? endif; ?>
 	</table>
 <? endif; ?>
 
@@ -54,9 +60,9 @@
 	<ul>
 	<?foreach ($items as $item): ?>
 		<li>
-			<div><a rel="item" href="./?server=<? h($base); ?>&amp;id=<? h(urlencode($item['id'])); ?>"><? h($item['title']); ?></a></div>
-			<div><? h($item['date']); ?></div>
-			<p><? h($item['description']); ?></p>
+			<div><a rel="item" href="./?server=<? h($base); ?>&amp;id=<? h(urlencode($item['id'])); ?>"><? h($item['dc']['title']); ?></a></div>
+			<div><? h($item['dc']['date']); ?></div>
+			<p><? h($item['dc']['description']); ?></p>
 		</li>
 	<? endforeach; ?>
 	</ul>

@@ -13,12 +13,12 @@ if (!$_GET['server']) {
 
 $oai = new OAI($_GET['server']);
 
-$fields = array();
+$item = array();
 $items = array();
 $links = array();
 
 if (isset($_GET['id'])) {
-	list($fields, $links) = $oai->item($_GET['id']);
+	list($item, $links) = $oai->item($_GET['id']);
 }
 else if (isset($_GET['set'])) {
 	list($items, $links) = $oai->items($_GET['set'], $_GET['resumptionToken'], $_GET['from'], $_GET['until']);
@@ -37,8 +37,8 @@ require __DIR__ . '/template.html.php';
 
 ob_end_flush();
 
-/** 
- * HTML-escaping helper function 
+/**
+ * HTML-escaping helper function
  */
 function h($text) {
   print htmlspecialchars($text, ENT_QUOTES, 'UTF-8');

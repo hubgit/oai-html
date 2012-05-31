@@ -20,6 +20,13 @@ foreach ($nodes as $node) {
 
 <h1>OAI Explorer</h1>
 
+<form>
+	<label>OAI Service Provider Base URL: <input name="server" type="url" size="100"></label>
+	<input type="submit" value="Show">
+</form>
+
+<div>or choose a service provider from the list below:</div>
+
 <ul>
 <? foreach ($items as $item): ?>
 	<li><a rel="service" href="./?server=<? h($item['url']) ?>"><? h($item['name'] ? $item['name'] : $item['url']) ?></a></li>

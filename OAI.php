@@ -12,6 +12,8 @@ class OAI {
       CURLOPT_FOLLOWLOCATION => true,
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => 'gzip,deflate',
+      CURLOPT_HTTPHEADER => array('Acccept' => 'application/xml'),
+      CURLOPT_VERBOSE => true,
     ));
   }
 
@@ -21,7 +23,7 @@ class OAI {
     $xml = curl_exec($this->curl);
 
     $dom = new DOMDocument;
-    $dom->loadXML($xml);
+    @$dom->loadXML($xml);
 
     $xpath = new DOMXPath($dom);
     $xpath->registerNamespace('oai', 'http://www.openarchives.org/OAI/2.0/');
@@ -45,7 +47,7 @@ class OAI {
     $params = array(
       'verb' => 'Identify',
     );
-    
+
     list($url, $xpath, $root) = $this->fetch($params);
     $xpath->registerNamespace('oai_id', 'http://www.openarchives.org/OAI/2.0/oai-identifier');
 
@@ -98,16 +100,8 @@ class OAI {
     list($url, $xpath, $root) = $this->fetch($params);
 
     $items = array();
-    foreach ($xpath->query('oai:record', $root) as $item) {
-      $header = $xpath->query('oai:header', $item)->item(0);
-      $metadata = $xpath->query('oai:metadata/oai_dc:dc', $item)->item(0);
-
-      $items[] = array(
-        'id' => $xpath->query('oai:identifier', $header)->item(0)->textContent,
-        'title' => $xpath->query('dc:title', $metadata)->item(0)->textContent,
-        'date' => $xpath->query('dc:date', $metadata)->item(0)->textContent,
-        'description' => $xpath->query('dc:description', $metadata)->item(0)->textContent,
-      );
+    foreach ($xpath->query('oai:record', $root) as $record) {
+      $items[] = $this->metadata($xpath, $record);
     }
 
     $links = array('alternate' => $url);
@@ -126,16 +120,24 @@ class OAI {
 
     list($url, $xpath, $root) = $this->fetch($params);
 
-    $fields = array();
-    foreach ($xpath->query('oai:record/oai:metadata/oai_dc:dc/*', $root) as $node) {
-      $fields[] = array(
-        'field' => $node->localName,
-        'value' => $node->textContent,
-      );
-    }
+    $record = $xpath->query('oai:record', $root)->item(0);
+    $item = $this->metadata($xpath, $record);
 
     $links = array('alternate' => $url);
 
-    return array($fields, $links);
+    return array($item, $links);
+  }
+
+  function metadata($xpath, $record) {
+    $item = array(
+      'id' => $xpath->query('oai:header/oai:identifier', $record)->item(0)->textContent,
+      'dc' => array(),
+    );
+
+    foreach ($xpath->query('oai:metadata/oai_dc:dc/*', $record) as $node) {
+      $item['dc'][$node->localName] = $node->textContent;
+    }
+
+    return $item;
   }
 }
