@@ -27,16 +27,16 @@
 	</ul>
 <? endif; ?>
 
-<? if ($item): ?>
+<? if ($entry): ?>
 	<h2>Item</h2>
 
 	<table>
 		<tr>
 			<th>id</th>
-			<td><? h($item['id']); ?></td>
+			<td><? h($entry['id']); ?></td>
 		</tr>
-<? if ($item['dc']): ?>
-<?foreach ($item['dc'] as $field => $value): ?>
+<? if ($entry['dc']): ?>
+<?foreach ($entry['dc'] as $field => $value): ?>
 		<tr>
 			<th><? h($field); ?></th>
 			<td><? h($value); ?></td>

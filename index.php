@@ -13,12 +13,12 @@ if (!$_GET['server']) {
 
 $oai = new OAI($_GET['server']);
 
-$item = array();
+$entry = array();
 $items = array();
 $links = array();
 
 if (isset($_GET['id'])) {
-	list($item, $url) = $oai->item($_GET['id']);
+	list($entry, $url) = $oai->item($_GET['id']);
 }
 else if (isset($_GET['set'])) {
 	list($items, $url, $token) = $oai->items($_GET['set'], $_GET['resumptionToken'], $_GET['from'], $_GET['until']);
