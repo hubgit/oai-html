@@ -28,7 +28,9 @@ class OAI {
     $xpath->registerNamespace('oai_dc', 'http://www.openarchives.org/OAI/2.0/oai_dc/');
     $xpath->registerNamespace('dc', 'http://purl.org/dc/elements/1.1/');
 
-    return array($url, $xpath);
+    $root = $xpath->query('oai:' . $params['verb'])->item(0);
+
+    return array($url, $xpath, $root);
   }
 
   function resumptionURL($xpath, $root) {
@@ -44,9 +46,7 @@ class OAI {
       'verb' => 'Identify',
     );
     
-    list($url, $xpath) = $this->fetch($params);
-    $root = $xpath->query('oai:' . $params['verb'])->item(0);
-
+    list($url, $xpath, $root) = $this->fetch($params);
     $xpath->registerNamespace('oai_id', 'http://www.openarchives.org/OAI/2.0/oai-identifier');
 
     return array(
@@ -62,8 +62,7 @@ class OAI {
       'resumptionToken' => $token,
     );
 
-    list($url, $xpath) = $this->fetch($params);
-    $root = $xpath->query('oai:' . $params['verb'])->item(0);
+    list($url, $xpath, $root) = $this->fetch($params);
 
     $items = array();
     foreach ($xpath->query('oai:set', $root) as $set) {
@@ -96,8 +95,7 @@ class OAI {
       );
     }
 
-    list($url, $xpath) = $this->fetch($params);
-    $root = $xpath->query('oai:' . $params['verb'])->item(0);
+    list($url, $xpath, $root) = $this->fetch($params);
 
     $items = array();
     foreach ($xpath->query('oai:record', $root) as $item) {
@@ -126,8 +124,7 @@ class OAI {
       'identifier' => $id,
     );
 
-    list($url, $xpath) = $this->fetch($params);
-    $root = $xpath->query('oai:' . $params['verb'])->item(0);
+    list($url, $xpath, $root) = $this->fetch($params);
 
     $fields = array();
     foreach ($xpath->query('oai:record/oai:metadata/oai_dc:dc/*', $root) as $node) {
