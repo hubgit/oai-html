@@ -2,10 +2,9 @@
 
 if (PHP_SAPI !== 'cli') exit();
 
-require '../oai-html/OAI.php';
-
 $base = 'http://www.pubmedcentral.gov/oai/oai.cgi';
 
+require '../OAI.php';
 $oai = new OAI($base);
 
 $data = array();
@@ -16,5 +15,4 @@ do {
 	$data = array_merge($data, $sets);
 } while ($token);
 
-header('Content-Type: application/json; charset=utf-8');
-print json_encode($data);
+print_r($data);

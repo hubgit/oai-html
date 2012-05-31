@@ -2,20 +2,23 @@
 
 if (PHP_SAPI !== 'cli') exit();
 
-require '../oai-html/OAI.php';
-
+// configuration
 $base = 'http://www.pubmedcentral.gov/oai/oai.cgi';
 $set = 'bmcbiology';
 
+$dir = 'data/items';
+if (!file_exists($dir)) mkdir($dir, 0700, true);
+
+// OAI class
+require '../OAI.php';
 $oai = new OAI($base);
 
-$data = array();
-
+// fetch all the items
 $token = null;
+$i = 1;
 do {
+	$file = $dir . '/' . $i++ . '.js.gz';
+	print $file . "\n";
 	list($items, $links, $token) = $oai->items($set, $token);
-	$data = array_merge($data, $items);
+	file_put_contents('compress.zlib://' . $file, json_encode($items));
 } while ($token);
-
-header('Content-Type: application/json; charset=utf-8');
-print json_encode($data);
