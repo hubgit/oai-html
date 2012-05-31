@@ -65,14 +65,10 @@ class OAI {
       );
     }
 
-    $links = array('alternate' => $url);
-    $resumptionURL = $this->resumption($xpath, $root);
-    if ($resumptionURL) $links['next'] = $resumptionURL;
-
-    return array($items, $links);
+    return array($items, $url, $this->token($xpath, $root));
   }
 
-  function items($set, $token = null, $from, $until) {
+  function items($set, $token = null, $from = null, $until = null) {
     $params = array(
       'verb' => 'ListRecords',
       'set' => $set,
@@ -88,11 +84,7 @@ class OAI {
       $items[] = $this->metadata($xpath, $record);
     }
 
-    $links = array('alternate' => $url);
-    $resumptionURL = $this->resumption($xpath, $root);
-    if ($resumptionURL) $links['next'] = $resumptionURL;
-
-    return array($items, $links);
+    return array($items, $url, $this->token($xpath, $root));
   }
 
   function item($id) {
@@ -107,16 +99,13 @@ class OAI {
     $record = $xpath->query('oai:record', $root)->item(0);
     $item = $this->metadata($xpath, $record);
 
-    $links = array('alternate' => $url);
-
-    return array($item, $links);
+    return array($item, $url);
   }
 
-  private function resumption($xpath, $root) {
+  private function token($xpath, $root) {
     $tokenNodes = $xpath->query('oai:resumptionToken', $root);
     if ($tokenNodes->length) {
-      $params = array_merge($_GET, array('resumptionToken' => $tokenNodes->item(0)->textContent));
-      return './?' . http_build_query($params);
+      return $tokenNodes->item(0)->textContent;
     }
   }
 
