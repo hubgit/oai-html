@@ -6,54 +6,33 @@ function h($text) {
 
 class OAI {
 	public $baseURL;
+	public $curl;
 
 	function __construct($baseURL) {
 		$this->baseURL = $baseURL;
+		$this->curl = curl_init();
+		curl_setopt_array($this->curl, array(
+			CURLOPT_URL => $url,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => 'gzip,deflate',
+		));
 	}
 
-	function generate() {
-		ob_start();
-
-		$fields = array();
-		$items = array();
-		$links = array();
-
-		if (isset($_GET['id'])) {
-			list($fields, $links) = $this->item($_GET['id']);
-		}
-		else if (isset($_GET['set'])) {
-			list($items, $links) = $this->items($_GET['set'], $_GET['resumptionToken'], $_GET['from'], $_GET['until']);
-		}
-		else {
-			$info = $this->identify();
-			list($sets, $links) = $this->sets($_GET['resumptionToken']);
-		}
-
-		foreach ($links as $relation => $url) {
-			header(sprintf('Link: <%s>; rel="%s"', $url, $relation));
-		}
-
-		$baseURL = $this->baseURL;
-		require __DIR__ . '/index.html.php';
-		ob_end_flush();
-	}
-
-	function xpath($url) {
-		$curl = curl_init($url);
-		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_ENCODING, 'gzip,deflate');
-		$xml = curl_exec($curl);
+	function fetch($params) {
+		$url = $this->baseURL . '?' . http_build_query($params);
+		curl_setopt($this->curl, CURLOPT_URL, $url);
+		$xml = curl_exec($this->curl);
 
 		$dom = new DOMDocument;
 		$dom->loadXML($xml);
-		//print $dom->saveXML(); exit();
 
 		$xpath = new DOMXPath($dom);
 		$xpath->registerNamespace('oai', 'http://www.openarchives.org/OAI/2.0/');
 		$xpath->registerNamespace('oai_dc', 'http://www.openarchives.org/OAI/2.0/oai_dc/');
 		$xpath->registerNamespace('dc', 'http://purl.org/dc/elements/1.1/');
-		return $xpath;
+
+		return array($url, $xpath);
 	}
 
 	function resumptionURL($xpath, $root) {
@@ -68,9 +47,8 @@ class OAI {
 		$params = array(
 			'verb' => 'Identify',
 		);
-
-		$url = $this->baseURL . '?' . http_build_query($params);
-		$xpath = $this->xpath($url);
+		
+		list($url, $xpath) = $this->fetch($params);
 		$root = $xpath->query('oai:' . $params['verb'])->item(0);
 
 		$xpath->registerNamespace('oai_id', 'http://www.openarchives.org/OAI/2.0/oai-identifier');
@@ -88,8 +66,7 @@ class OAI {
 			'resumptionToken' => $token,
 		);
 
-		$url = $this->baseURL . '?' . http_build_query($params);
-		$xpath = $this->xpath($url);
+		list($url, $xpath) = $this->fetch($params);
 		$root = $xpath->query('oai:' . $params['verb'])->item(0);
 
 		$items = array();
@@ -123,8 +100,7 @@ class OAI {
 			);
 		}
 
-		$url = $this->baseURL . '?' . http_build_query($params);
-		$xpath = $this->xpath($url);
+		list($url, $xpath) = $this->fetch($params);
 		$root = $xpath->query('oai:' . $params['verb'])->item(0);
 
 		$items = array();
@@ -154,16 +130,7 @@ class OAI {
 			'identifier' => $id,
 		);
 
-		$url = $this->baseURL . '?' . http_build_query($params);
-
-		$dom = new DOMDocument;
-		$dom->load($url);
-
-		$xpath = new DOMXPath($dom);
-		$xpath->registerNamespace('oai', 'http://www.openarchives.org/OAI/2.0/');
-		$xpath->registerNamespace('oai_dc', 'http://www.openarchives.org/OAI/2.0/oai_dc/');
-		$xpath->registerNamespace('dc', 'http://purl.org/dc/elements/1.1/');
-
+		list($url, $xpath) = $this->fetch($params);
 		$root = $xpath->query('oai:' . $params['verb'])->item(0);
 
 		$fields = array();
