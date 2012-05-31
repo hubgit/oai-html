@@ -18,7 +18,6 @@ class OAI {
     $this->base = $base;
     $this->curl = curl_init();
     curl_setopt_array($this->curl, array(
-      CURLOPT_URL => $url,
       CURLOPT_FOLLOWLOCATION => true,
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => 'gzip,deflate',
