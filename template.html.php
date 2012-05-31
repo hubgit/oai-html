@@ -36,7 +36,7 @@
 			<td><? h($entry['id']); ?></td>
 		</tr>
 <? if ($entry['dc']): ?>
-<?foreach ($entry['dc'] as $field => $value): ?>
+<? foreach ($entry['dc'] as $field => $value): ?>
 		<tr>
 			<th><? h($field); ?></th>
 			<td><? h($value); ?></td>
