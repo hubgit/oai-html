@@ -11,8 +11,8 @@ class OAI {
   public $curl;
 
   /**
-   * Create a new instance
-   * @param string $base The base URL of the repository
+   * Create a new instance.
+   * @param string $base base URL of the repository
    */
   function __construct($base) {
     $this->base = $base;
@@ -59,7 +59,7 @@ class OAI {
       );
     }
 
-    return array($items, $url, $this->token($xpath, $root));
+    return array($url, $items, $this->token($xpath, $root));
   }
 
   /**
@@ -86,7 +86,7 @@ class OAI {
       $items[] = $this->metadata($xpath, $record);
     }
 
-    return array($items, $url, $this->token($xpath, $root));
+    return array($url, $items, $this->token($xpath, $root));
   }
 
   /**
@@ -106,7 +106,7 @@ class OAI {
     $record = $xpath->query('oai:record', $root)->item(0);
     $item = $this->metadata($xpath, $record);
 
-    return array($item, $url);
+    return array($url, $item);
   }
 
   /**
@@ -142,7 +142,7 @@ class OAI {
   }
 
   /**
-   * Parse a resumption token from the response
+   * Parse a resumption token from the response.
    * @param DOMXPath $xpath
    * @param DOMElement $root
    * @return string|null

@@ -18,14 +18,14 @@ $items = array();
 $links = array();
 
 if (isset($_GET['id'])) {
-	list($entry, $url) = $oai->item($_GET['id']);
+	list($url, $entry) = $oai->item($_GET['id']);
 }
 else if (isset($_GET['set'])) {
-	list($items, $url, $token) = $oai->items($_GET['set'], $_GET['resumptionToken'], $_GET['from'], $_GET['until']);
+	list($url, $items, $token) = $oai->items($_GET['set'], $_GET['resumptionToken'], $_GET['from'], $_GET['until']);
 }
 else {
 	$info = $oai->identify();
-	list($sets, $url, $token) = $oai->sets($_GET['resumptionToken']);
+	list($url, $sets, $token) = $oai->sets($_GET['resumptionToken']);
 }
 
 $links = array('alternate' => $url);

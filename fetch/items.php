@@ -19,6 +19,6 @@ $i = 1;
 do {
 	$file = $dir . '/' . $i++ . '.js.gz';
 	print $file . "\n";
-	list($items, $links, $token) = $oai->items($set, $token);
+	list($url, $items, $token) = $oai->items($set, $token);
 	file_put_contents('compress.zlib://' . $file, json_encode($items));
 } while ($token);

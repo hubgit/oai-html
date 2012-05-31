@@ -11,7 +11,7 @@ $data = array();
 
 $token = null;
 do {
-	list($sets, $links, $token) = $oai->sets($token);
+	list($url, $sets, $token) = $oai->sets($token);
 	$data = array_merge($data, $sets);
 } while ($token);
 
