@@ -13,11 +13,17 @@ class OAI {
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => 'gzip,deflate',
       CURLOPT_HTTPHEADER => array('Acccept' => 'application/xml'),
-      CURLOPT_VERBOSE => true,
     ));
   }
 
-  function fetch($params) {
+  function fetch($params, $token = null) {
+    if ($token) {
+      $params = array(
+        'verb' => $params['verb'],
+        'resumptionToken' => $token,
+      );
+    }
+
     $url = $this->base . '?' . http_build_query($params);
     curl_setopt($this->curl, CURLOPT_URL, $url);
     $xml = curl_exec($this->curl);
@@ -35,19 +41,8 @@ class OAI {
     return array($url, $xpath, $root);
   }
 
-  function resumptionURL($xpath, $root) {
-    $tokenNodes = $xpath->query('oai:resumptionToken', $root);
-    if ($tokenNodes->length) {
-      $params = array_merge($_GET, array('resumptionToken' => $tokenNodes->item(0)->textContent));
-      return './?' . http_build_query($params);
-    }
-  }
-
   function identify() {
-    $params = array(
-      'verb' => 'Identify',
-    );
-
+    $params = array('verb' => 'Identify');
     list($url, $xpath, $root) = $this->fetch($params);
     $xpath->registerNamespace('oai_id', 'http://www.openarchives.org/OAI/2.0/oai-identifier');
 
@@ -59,12 +54,8 @@ class OAI {
   }
 
   function sets($token = null) {
-    $params = array(
-      'verb' => 'ListSets',
-      'resumptionToken' => $token,
-    );
-
-    list($url, $xpath, $root) = $this->fetch($params);
+    $params = array('verb' => 'ListSets');
+    list($url, $xpath, $root) = $this->fetch($params, $token);
 
     $items = array();
     foreach ($xpath->query('oai:set', $root) as $set) {
@@ -75,7 +66,7 @@ class OAI {
     }
 
     $links = array('alternate' => $url);
-    $resumptionURL = $this->resumptionURL($xpath, $root);
+    $resumptionURL = $this->resumption($xpath, $root);
     if ($resumptionURL) $links['next'] = $resumptionURL;
 
     return array($items, $links);
@@ -90,14 +81,7 @@ class OAI {
       'until' => $until,
     );
 
-    if ($token) {
-      $params =  array(
-        'verb' => $params['verb'],
-        'resumptionToken' => $token,
-      );
-    }
-
-    list($url, $xpath, $root) = $this->fetch($params);
+    list($url, $xpath, $root) = $this->fetch($params, $token);
 
     $items = array();
     foreach ($xpath->query('oai:record', $root) as $record) {
@@ -105,7 +89,7 @@ class OAI {
     }
 
     $links = array('alternate' => $url);
-    $resumptionURL = $this->resumptionURL($xpath, $root);
+    $resumptionURL = $this->resumption($xpath, $root);
     if ($resumptionURL) $links['next'] = $resumptionURL;
 
     return array($items, $links);
@@ -128,7 +112,15 @@ class OAI {
     return array($item, $links);
   }
 
-  function metadata($xpath, $record) {
+  private function resumption($xpath, $root) {
+    $tokenNodes = $xpath->query('oai:resumptionToken', $root);
+    if ($tokenNodes->length) {
+      $params = array_merge($_GET, array('resumptionToken' => $tokenNodes->item(0)->textContent));
+      return './?' . http_build_query($params);
+    }
+  }
+
+  private function metadata($xpath, $record) {
     $item = array(
       'id' => $xpath->query('oai:header/oai:identifier', $record)->item(0)->textContent,
       'dc' => array(),
