@@ -1,6 +1,6 @@
 <?
 
-ini_set('display_errors', true);
+//ini_set('display_errors', true);
 
 ob_start();
 
@@ -32,7 +32,14 @@ foreach ($links as $relation => $url) {
 	header(sprintf('Link: <%s>; rel="%s"', $url, $relation));
 }
 
-$baseURL = $oai->baseURL;
+$base = $oai->base;
 require __DIR__ . '/template.html.php';
 
 ob_end_flush();
+
+/** 
+ * HTML-escaping helper function 
+ */
+function h($text) {
+  print htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+}

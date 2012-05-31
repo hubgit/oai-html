@@ -21,7 +21,7 @@
 
 	<ul>
 	<? foreach ($sets as $item): ?>
-	<li><a rel="set" href="./?server=<? h($baseURL); ?>&amp;set=<? h(urlencode($item['id'])); ?>"><? h($item['name'] ? $item['name'] : $item['id']); ?></a></li>
+	<li><a rel="set" href="./?server=<? h($base); ?>&amp;set=<? h(urlencode($item['id'])); ?>"><? h($item['name'] ? $item['name'] : $item['id']); ?></a></li>
 
 	<? endforeach; ?>
 	</ul>
@@ -54,7 +54,7 @@
 	<ul>
 	<?foreach ($items as $item): ?>
 		<li>
-			<div><a rel="item" href="./?server=<? h($baseURL); ?>&amp;id=<? h(urlencode($item['id'])); ?>"><? h($item['title']); ?></a></div>
+			<div><a rel="item" href="./?server=<? h($base); ?>&amp;id=<? h(urlencode($item['id'])); ?>"><? h($item['title']); ?></a></div>
 			<div><? h($item['date']); ?></div>
 			<p><? h($item['description']); ?></p>
 		</li>
