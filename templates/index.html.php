@@ -2,12 +2,12 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>OAI Explorer</title>
+  <title>OAI-PMH Explorer</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <h1><a href="./">OAI Explorer</a></h1>
+  <h1><a href="./">OAI-PMH Explorer</a></h1>
 
 <? 
 if ($info) require __DIR__ . '/info.html.php';

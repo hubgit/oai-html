@@ -2,20 +2,20 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>OAI Explorer</title>
+  <title>OAI-PMH Explorer</title>
   <style>body { font-family: sans-serif; }</style>
 </head>
 
 <body>
 
-	<h1>OAI Explorer</h1>
+	<h1>OAI-PMH Explorer</h1>
 
 	<form>
-		<label>OAI Service Provider Base URL: <input name="server" type="url" size="100"></label>
-		<input type="submit" value="Show">
+		<label>Enter an OAI-PMH data provider base URL: <input name="server" type="url" size="100"></label>
+		<input type="submit" value="Explore">
 	</form>
 
-	<div>or choose a service provider from the list below:</div>
+	<div>or choose a repository from the list below:</div>
 
 	<ul>
 	<? foreach ($items as $item): ?>
@@ -26,5 +26,8 @@
 	<? endforeach; ?>
 	</ul>
 
+	<div>Source: <a href="http://www.opendoar.org/">DOAR</a></div>
+
+	<a href="https://github.com/hubgit/oai-html"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 </body>
 </html>
