@@ -7,21 +7,21 @@ ob_start();
 require __DIR__ . '/OAI.php';
 
 if (!$_GET['server']) {
-	include __DIR__ . '/services.html.php';
+	include __DIR__ . '/services.php';
 	exit();
 }
 
 $oai = new OAI($_GET['server']);
 
 $entry = array();
-$items = array();
+$entries = array();
 $links = array();
 
 if (isset($_GET['id'])) {
 	list($url, $entry) = $oai->item($_GET['id']);
 }
 else if (isset($_GET['set'])) {
-	list($url, $items, $token) = $oai->items($_GET['set'], $_GET['resumptionToken'], $_GET['from'], $_GET['until']);
+	list($url, $entries, $token) = $oai->items($_GET['set'], $_GET['resumptionToken'], $_GET['from'], $_GET['until']);
 }
 else {
 	$info = $oai->identify();
@@ -36,7 +36,7 @@ foreach ($links as $relation => $url) {
 }
 
 $base = $oai->base;
-require __DIR__ . '/template.html.php';
+require __DIR__ . '/templates/index.html.php';
 
 ob_end_flush();
 

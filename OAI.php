@@ -165,7 +165,7 @@ class OAI {
     );
 
     foreach ($xpath->query('oai:metadata/oai_dc:dc/*', $record) as $node) {
-      $item['dc'][$node->localName] = $node->textContent;
+      $item['dc'][$node->localName][] = $node->textContent;
     }
 
     return $item;
