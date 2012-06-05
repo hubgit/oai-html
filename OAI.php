@@ -63,13 +63,13 @@ class OAI {
 
   /**
    * A paginated list of all items in a set.
-   * @param string $set
+   * @param string|null $set
    * @param string|null $token
    * @param string|null $from
    * @param string|null $until
    * @return array
    */
-  function items($set, $token = null, $from = null, $until = null) {
+  function items($set = null, $token = null, $from = null, $until = null) {
     $params = array(
       'verb' => 'ListRecords',
       'set' => $set,
